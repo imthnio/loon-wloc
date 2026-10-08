@@ -1,5 +1,5 @@
 #!name=WLOC 定位修改
-#!desc=修改 Apple 网络定位(WiFi/基站)返回坐标。设置：Safari 打开 https://gs-loc.apple.com/wloc-settings/save?lat=纬度&lon=经度 ；清除：/wloc-settings/clear 。仅支持 iOS 27 beta 5 及更早版本，iOS 27 beta 6+ 请关闭本插件并使用 mac/ios27-location.sh
+#!desc=修改 Apple 网络定位(WiFi/基站)返回坐标。设置：Safari 打开 https://gs-loc.apple.com/wloc-settings/save?lat=纬度&lon=经度 ；清除：/wloc-settings/clear 。仅支持 iOS 27 beta 5 及更早版本，iOS 27 beta 6+ 请关闭本插件，改用仓库里的「iOS27手机端方案」
 #!author=imthnio
 #!homepage=https://github.com/imthnio/loon-wloc
 #!icon=https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Apple.png
@@ -14,8 +14,8 @@ randomRadius = input, "0", tag=随机扰动半径(米, 0=关闭)
 logLevel = select, "info", "off", "error", "warn", "debug", tag=日志级别
 
 [Script]
-http-response ^https?:\/\/(gs-loc(-cn)?\.apple\.com|gsp-ssl\.ls\.apple\.com|bluedot\.is\.autonavi\.com(\.gds\.alibabadns\.com)?)\/clls\/wloc script-path=wloc.js, requires-body=true, binary-body-mode=true, timeout=30, enable={enabled}, tag=WLOC 修改, argument=[{enabled},{longitude},{latitude},{accuracy},{randomRadius},{logLevel}]
-http-request ^https?:\/\/gs-loc(-cn)?\.apple\.com\/wloc-settings\/ script-path=wloc-settings.js, timeout=10, tag=WLOC 设置
+http-response ^https?:\/\/(gs-loc(-cn)?\.apple\.com|gsp-ssl\.ls\.apple\.com|bluedot\.is\.autonavi\.com(\.gds\.alibabadns\.com)?)\/clls\/wloc script-path=https://raw.githubusercontent.com/imthnio/loon-wloc/main/loon/wloc.js, requires-body=true, binary-body-mode=true, timeout=30, enable={enabled}, tag=WLOC 修改, argument=[{enabled},{longitude},{latitude},{accuracy},{randomRadius},{logLevel}]
+http-request ^https?:\/\/gs-loc(-cn)?\.apple\.com\/wloc-settings\/ script-path=https://raw.githubusercontent.com/imthnio/loon-wloc/main/loon/wloc-settings.js, timeout=10, tag=WLOC 设置
 
 [MITM]
 hostname = gs-loc.apple.com, gs-loc-cn.apple.com, gsp-ssl.ls.apple.com, bluedot.is.autonavi.com, bluedot.is.autonavi.com.gds.alibabadns.com

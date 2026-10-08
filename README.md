@@ -9,11 +9,11 @@
 | iOS 版本 | 方案 |
 |---|---|
 | iOS 15 ~ iOS 27 beta 5 | **Loon 插件**（`loon/` 目录） |
-| iOS 27 beta 6 及以后（含正式版） | **Mac 脚本**（`mac/ios27-location.sh`），Loon 插件**无效且要关闭** |
+| iOS 27 beta 6 及以后（含正式版） | **手机端方案**：见 [iOS27手机端方案.md](iOS27手机端方案.md)（Loon 插件无效，要关闭） |
 
 **为什么 iOS 27 不行：** 从 iOS 27 beta 6 起，`locationd` 对 Apple 定位域名做了证书固定（certificate pinning），只接受 Apple 自己的 CA。Loon 的 MITM 证书即使“完全信任”也会在 TLS 握手时被拒绝，脚本根本拿不到 `/clls/wloc` 响应。这是系统层面的限制，换域名、换正则、改脚本、换代理软件都绕不过去；继续开着插件反而会让系统网络定位失败。
 
-因此 iOS 27+ 改用 Apple 开发者工具链自带的 **DVT LocationSimulation**（和 Xcode「模拟位置」是同一个服务），它不走网络，不受证书固定影响。代价是需要一台 Mac，并开启开发者模式。
+因此 iOS 27+ 改用系统自带的**开发者模拟定位服务**（和 Xcode「模拟位置」是同一个服务），它不走网络，不受证书固定影响。iOS 27 新增了手机端配对，配合本地回环 VPN，**全程在手机上就能完成**，详见 [iOS27手机端方案.md](iOS27手机端方案.md)。有 Mac 的话也可以用 `mac/ios27-location.sh`。
 
 ---
 
@@ -21,17 +21,13 @@
 
 ### 安装
 
-本仓库是私有仓库，Loon 无法直接订阅私有仓库的 raw 链接（需要 GitHub 令牌），所以用本地文件方式安装：
+Loon → 配置 → 插件 → 右上角 **+** → 填入订阅地址：
 
-1. 下载 `loon/` 目录里的三个文件：`wloc.plugin`、`wloc.js`、`wloc-settings.js`
-   （Mac 上：`gh repo clone imthnio/loon-wloc`，然后通过 iCloud 云盘传到手机）
-2. 在 iPhone「文件」App 中，把三个文件放进 **iCloud 云盘 → Loon** 文件夹的同一个目录里
-3. Loon → 配置 → 插件 → 添加本地插件 `wloc.plugin`（插件内 `script-path` 为相对路径，三个文件必须放在一起）
-4. 打开 MITM，安装并信任 Loon 证书（设置 → 通用 → 关于本机 → 证书信任设置）
+```
+https://raw.githubusercontent.com/imthnio/loon-wloc/main/loon/wloc.plugin
+```
 
-> 如果以后把仓库改为公开，也可以直接订阅
-> `https://raw.githubusercontent.com/imthnio/loon-wloc/main/loon/wloc.plugin`，
-> 但需先把插件里的 `script-path` 改成对应的完整 raw 链接。
+然后打开 MITM，安装并信任 Loon 证书（设置 → 通用 → 关于本机 → 证书信任设置）。
 
 ### 设置位置
 
@@ -70,9 +66,15 @@ https://gs-loc.apple.com/wloc-settings/save?lat=纬度&lon=经度
 
 ---
 
-## 方案二：Mac 脚本（iOS 27 beta 6+ / 正式版）
+## 方案二：iOS 27 beta 6+ / 正式版
 
-### 准备（一次）
+**推荐全程手机端操作**，见 [iOS27手机端方案.md](iOS27手机端方案.md)。
+
+下面是有 Mac 时的备用方案。
+
+### Mac 脚本
+
+#### 准备（一次）
 
 1. Mac 安装 uv：`brew install uv`（脚本会自动通过 `uvx` 运行 [pymobiledevice3](https://github.com/doronz88/pymobiledevice3)）
 2. iPhone 用数据线连 Mac，解锁并点「信任此电脑」
@@ -80,7 +82,7 @@ https://gs-loc.apple.com/wloc-settings/save?lat=纬度&lon=经度
    （若看不到该开关，先在 Mac 上执行一次 `prepare`，菜单会出现）
 4. **关闭 Loon 的 WLOC 插件**
 
-### 使用
+#### 使用
 
 ```bash
 cd mac
@@ -94,7 +96,7 @@ cd mac
 
 **无线使用：** 用数据线执行一次 `./ios27-location.sh wifi-on`，之后 iPhone 与 Mac 在同一 WiFi 下即可拔线运行 `set`。
 
-### 限制
+#### 限制
 
 - 需要 Mac 保持运行；模拟会话断开后定位可能恢复。
 - 这是“软件模拟定位”，部分 App 会通过 `isSimulatedBySoftware` 识别并拒绝。
@@ -107,7 +109,8 @@ cd mac
 loon/wloc.plugin         Loon 插件
 loon/wloc.js             响应脚本：解析 protobuf，替换 WiFi/基站坐标
 loon/wloc-settings.js    设置脚本：保存 / 查询 / 清除坐标，GCJ-02 → WGS84
-mac/ios27-location.sh    iOS 27+ Mac 端方案
+mac/ios27-location.sh    iOS 27+ Mac 端备用方案
+iOS27手机端方案.md        iOS 27+ 全程手机端方案
 ```
 
 ## 许可证
