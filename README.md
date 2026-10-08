@@ -2,8 +2,6 @@
 
 修改 Apple 网络定位服务（WiFi / 基站，`gs-loc.apple.com/clls/wloc`）返回的坐标，实现 iOS 虚拟定位。只适配 **Loon**。
 
-思路参考 [Yu9191/wloc](https://github.com/gitcharlesch/Yu9191-wloc)，脚本为 Loon 重新编写：无打包依赖、单文件可读，使用 JavaScriptCore 测试。
-
 ## 先看系统版本
 
 | iOS 版本 | 方案 |
@@ -112,7 +110,3 @@ loon/wloc-settings.js    设置脚本：保存 / 查询 / 清除坐标，GCJ-02 
 mac/ios27-location.sh    iOS 27+ Mac 端备用方案
 iOS27手机端方案.md        iOS 27+ 全程手机端方案
 ```
-
-## 许可证
-
-AGPL-3.0（沿用上游项目许可证）。仅供个人学习研究使用。
