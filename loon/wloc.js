@@ -12,8 +12,6 @@
  *     field 2  (WiFi 条目) { 1: "aa:bb:cc:dd:ee:ff", 2: Location }
  *     field 22 / 24 (基站) { ..., 5: Location }
  *   Location { 1: 纬度*1e8 (int64), 2: 经度*1e8 (int64), 3: 精度(米) }
- *
- * 思路参考 Yu9191/wloc 与 FFF686868/proxypin-wloc-spoofer。AGPL-3.0。
  */
 
 const STORE_KEY = 'wloc_settings';
